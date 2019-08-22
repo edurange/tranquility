@@ -1,69 +1,49 @@
-auth route:
-step -1: set correct postgres and redis connection variables!!!!!!!!!!
+# Tranquility
 
-when creating scenario, write scenerio ID and secret key to database(add to datatype)
-then, write that information to the bashrc file of every scenario
+Tranquility is a small golang microservice designed to capture log files in real time, remotly, through an API endpoint. I designed it to make real-time collection of bash histories easy and secure. It uses Redis for storage.
 
-then, write the curl command to the bashrc as well, and include the information in the headers
+## Development
 
-add ability for ruby inst to access active queue!!
+The .main binary is prebuilt for MacOS, and the .tranquility binary is prebuilt for 64-bit Linux. To develop, you'll need the google/uuid, go-redis/redis, and gin-gonic/gin libraries installed on your computer as well. 
 
+To build for 64-bit Linux, just runL
 
-todo:
-test all on device dialing in to another server with exposed port 80 
--how to serve this in production????
+```shell
+GOOS=linux GOARCH=amd64 go build -o tranquility .
+```
 
-schema:
+## Usage
+
+To begin serving, make sure Redis is running on the host. Right now, Redis credentials are hardcoded, although I plan to change that in the future. 
+
+```shell
+./tranquility [uuid]
+```
+
+Where uuid is a security phrase that must be included in the headers of GET or PUT commands.
+
+Payloads are structured like:
+
+```json
 {
-	user: $(whoami),
-	time: $(date),
-	command: $(echo $BASH_HISTORY)
+	user: [REDIS LOG KEY, STRING],
+	time: [UNIX TIMESTAMP, INTEGER],
+	command: [TEXT TO LOG, STRING]
 }
+```
 
+An example command to log a target machine's bash history could look like this: (place the following line inside /etc/bashrc)
 
-step1: write this line to bashrc
-export PROMPT_COMMAND='history -a; histJSON=$(echo {\"user\": \"$(whoami)\", \"time\": $(date +%s), \"command\": \"$(tail -n 1 ~/.bash_history)\"}); curl -s -d "$histJSON" -H "Content-Type: application/json" -H "uuid: deb9b30a-9c41-42e2-8fc1-41fe1ecc7084" -H "secret: foo" -X POST http://localhost:8080/logger >> /dev/null'
+```shell
+PROMPT_COMMAND='history -a; histJSON=$(echo {\"user\": \"$(whoami)\", \"time\": $(date +%s), \"command\": \"$(history 1 | cut -c 8-)\"}); curl -s -d "$histJSON" -H "Content-Type: application/json" -H "uuid: foo" -X POST <%= hostAddress:8080/logger >> /dev/null'
+```
 
+To fetch, then, just run a GET on any machine that can access the host:
 
-forV2:
-export PROMPT_COMMAND='history -a; histJSON=$(echo {\"user\": \"$(whoami)\", \"time\": $(date +%s), \"command\": \"$(tail -n 1 ~/.bash_history)\"}); curl -s -d "$histJSON" -H "Content-Type: application/json" -H "uuid: deb9b30a-9c41-42e2-8fc1-41fe1ecc7084" -X POST http://localhost:8080/logger >> /dev/null'
+```shell
+curl -s -H "Content-Type: application/json" -H "uuid: foo" -X GET localhost:8080/results/user > testy.log
+```
 
+## Testing
 
-forV3:
-export PROMPT_COMMAND='history -a; histJSON=$(echo {\"user\": \"$(whoami)\", \"time\": $(date +%s), \"command\": \"$(history 1 | cut -c 8-)\"}); curl -s -d "$histJSON" -H "Content-Type: application/json" -H "uuid: deb9b30a-9c41-42e2-8fc1-41fe1ecc7084" -X POST http://localhost:8080/logger >> /dev/null'
-
-step2: expose port 8080(for now)
-
-step3: set correct redis and postgres connection vars
-
-step 4: run server on same box as edurange_server 
-
-big bug: literally can't do quotes!!! single or double!!! need to fix this!!!!!!!!
-
-2 options:
--possibly move to microservece model and host all this crap elsewhere
--bake into edu-server
-
-MUST SWITCH OVER TARGET URL ON EDURANGE-SERVER!!!!!!!
-also, it's not going to work, because localhost != my box. How can we make it so? 
--will have to take hit for development(server only move)
--will have to open port 8080 on local machine, and use literal URL....
-or just make it a microservice! lol.  
-
-still have to worry about exposing port 80.............
-
-GOOS=linux GOARCH=amd64 go build -o my_app .
-
-https://github.com/edurange/instant-history/raw/master/tranquility/main
-
-
-echo -e "$?\t$(date --utc +%FT%T.%3NZ)\t$(whoami)\t$(pwd)\t$(history 1 | cut -c 8-)" >> ~/.bash_history.log
-
-<% if instance.os != "nat" %>
-
-open port 80 on nat......
-and make it accessable to everything!!!
-
-NAT might also not be writable without changing chef scripts on AWS...
-also check that UUID is being set!
-
+There's no tests right now, but the /benchmarking directory has some benchmarking tests I wrote to compare log read/write speed between this API, pure redis-cli commands, and logging over s3. Use at your own risk. 
