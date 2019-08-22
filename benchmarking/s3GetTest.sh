@@ -7,8 +7,8 @@ fileName="testOutput.log"
 relativePath="/${s3Bucket}/${fileName}"
 contentType="text/plain"
 stringToSign="GET\n\n${contentType}\n${dateFormatted}\n${relativePath}"
-s3AccessKey="AKIAVODDJPWATJPXUHVP"
-s3SecretKey="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"
+s3AccessKey="XXXXXXXXX"
+s3SecretKey="XXXXXXXXX"
 signature=`echo -en ${stringToSign} | openssl sha1 -hmac ${s3SecretKey} -binary | base64`
 curl -X GET \
 -H "Host: ${s3Bucket}.s3.amazonaws.com" \

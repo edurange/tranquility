@@ -6,7 +6,7 @@ Tranquility is a small golang microservice designed to capture log files in real
 
 The .main binary is prebuilt for MacOS, and the .tranquility binary is prebuilt for 64-bit Linux. To develop, you'll need the google/uuid, go-redis/redis, and gin-gonic/gin libraries installed on your computer as well. 
 
-To build for 64-bit Linux, just runL
+To build for 64-bit Linux, just run:
 
 ```shell
 GOOS=linux GOARCH=amd64 go build -o tranquility .
