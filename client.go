@@ -38,7 +38,10 @@ func main(){
 	send, _ := json.Marshal(&record)
 
 	logger := &http.Client{}
-	loggerReq, _ := http.NewRequest("POST", url + "/logger", bytes.NewBuffer(send))
+	loggerReq, err := http.NewRequest("POST", url + "/logger", bytes.NewBuffer(send))
+	if err != nil{
+		panic(err)
+	}
 	loggerReq.Header.Add("Content-Type", "application/json")
 	loggerReq.Header.Add("uuid", uuid)
 

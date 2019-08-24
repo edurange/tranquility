@@ -51,3 +51,7 @@ There's no tests right now, but the /benchmarking directory has some benchmarkin
 ## etc
 
 ./client $(history 1 | cut -c 8-)
+
+https://github.com/edurange/tranquility/raw/master/tClient
+
+https://github.com/edurange/tranquility/raw/master/tranquility
