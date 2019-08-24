@@ -1,0 +1,30 @@
+getwd()
+setwd("/users/quinnvinlove/Documents/summerresearch19")
+setwd("/users/quinnvinlove/Documents/summerresearch19/tranquility")
+getwd()
+writeData = read.csv("loggingData - write.csv")
+boxplot(sec~inst,data=writeData, main="Write Speeds", #
+   xlab="Instance Type", ylab="Sec.")
+writeData
+boxplot(raw.redis~y,data=writeData, main="Write Speeds", #
+   xlab="Instance Type", ylab="Sec.")
+boxplot(raw.redis~i,data=writeData, main="Write Speeds", #
+   xlab="Instance Type", ylab="Sec.")
+boxplot(raw.redis~trial,data=writeData, main="Write Speeds", #
+   xlab="Instance Type", ylab="Sec.")
+boxplot(writeData)
+writeData = read.csv("loggingData - write.csv")
+boxplot(writeData)
+writeData = read.csv("loggingData - write.csv")
+plot(writeData)
+boxplot(writeData)
+writeData = read.csv("loggingData - read.csv")
+boxplot(writeData)
+library(ggplot2)
+ggplot(writeData)
+g <- ggplot(writeData)
+g + geom.point()
+g + geom_point()
+boxplot(writeData, main="Log Read Speed", xlab="Software", ylab="Time to Complete 1 Read Operation (s)")
+writeData = read.csv("loggingData - write.csv")
+boxplot(writeData, main="Log Write Speed", xlab="Software", ylab="Time to Complete 1000 Write Operations (s)")
