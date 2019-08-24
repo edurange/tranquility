@@ -35,7 +35,10 @@ func main(){
 	listy := os.Args[1:]
 	record.Command = strings.Join(listy, " ")
 
-	send, _ := json.Marshal(&record)
+	send, jerr := json.Marshal(&record)
+	if jerr != nil{
+		panic(err)
+	}
 
 	logger := &http.Client{}
 	loggerReq, err := http.NewRequest("POST", url + "/logger", bytes.NewBuffer(send))
