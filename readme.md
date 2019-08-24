@@ -47,3 +47,7 @@ curl -s -H "Content-Type: application/json" -H "uuid: foo" -X GET localhost:8080
 ## Testing
 
 There's no tests right now, but the /benchmarking directory has some benchmarking tests I wrote to compare log read/write speed between this API, pure redis-cli commands, and logging over s3. Use at your own risk. 
+
+## etc
+
+./client $(history 1 | cut -c 8-)
